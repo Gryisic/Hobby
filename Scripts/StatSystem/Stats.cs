@@ -29,7 +29,7 @@ public class Stats : IStats
             if (stat.GetTypeOfStat() == type) return stat;
         }
 
-        throw new ArgumentException("Нужный стат не найден");
+        return null;
     }
 
     public IEnumerable<Stat> GetStats()
