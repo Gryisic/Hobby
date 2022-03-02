@@ -49,27 +49,4 @@ public class Enemy : Unit
 
         _stateMachine = new EnemyStateMachine(this, patrol, patrol, chase, encounter);
     }
-
-    //private void OnDrawGizmos()
-    //{
-    //    var _nodes = _patrolState.DebugNodes;
-
-    //    if (_nodes != null)
-    //    {
-    //        for (int i = 0; i < _nodes.Count; i++)
-    //        {
-    //            if (i + 1 < _nodes.Count)
-    //            {
-    //                //Vector2 vector1 = new Vector2(_nodes[i].GetPosition.x - 0.5f, _nodes[i].GetPosition.y - 0.5f);
-    //                //Vector2 vector2 = new Vector2(vector1.x + 1f, vector1.y + 1f);
-
-    //                //Gizmos.DrawLine(vector1, new Vector2(vector1.x + 1f, vector1.y));
-    //                //Gizmos.DrawLine(vector1, new Vector2(vector1.x, vector1.y + 1f));
-    //                //Gizmos.DrawLine(vector2, new Vector2(vector2.x - 1f, vector2.y));
-    //                //Gizmos.DrawLine(vector2, new Vector2(vector2.x, vector2.y - 1f));
-    //                Gizmos.DrawLine(_nodes[i].GetPosition, _nodes[i + 1].GetPosition);
-    //            }
-    //        }
-    //    }
-    //}
 }
