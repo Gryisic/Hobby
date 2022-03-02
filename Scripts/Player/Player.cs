@@ -42,35 +42,13 @@ public class Player : MonoBehaviour, ITarget
         _movement.Move(moveDirection, _movementSpeed);
     }
 
-    private void Attack()
-    {
-        var damagableObjects = Physics2D.OverlapCircleAll(_enemyCheck.position, _checkRadius);
-
-        foreach (var damagableObject in damagableObjects)
-        {
-            if (damagableObject.TryGetComponent(out IDamagable damagable) && damagable.GetType() == typeof(Unit))
-            {
-                InitializeBattle();
-            }
-        }
-    }
-
-    private void InitializeBattle()
-    {
-        Debug.Log("Think mazefaka");
-    }
-
     private void AttachControl()
     {
         _control.Enable();
-
-        _control.Player.Attack.performed += context => Attack();
     }
 
     private void DetachControl()
     {
         _control.Disable();
-
-        _control.Player.Attack.performed -= context => Attack();
     }
 }
