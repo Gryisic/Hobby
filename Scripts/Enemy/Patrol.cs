@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Patrol : State
@@ -10,48 +11,60 @@ public class Patrol : State
 
     private float _speed;
 
+    private CustomCoroutine _routine;
+
+    public List<PathFindingNode> DebugNodes;
+
     public Patrol(Enemy unit, Vector2 area, float radius, float speed)
     {
         _unit = unit;
         _area = area;
         _radius = radius;
         _speed = speed;
+
+        _routine = new CustomCoroutine(_unit, PatrolRoutine());
     }
 
     public override void Enter()
     {
-        _unit.StartCoroutine(Patrolling());
+        _routine?.Start();
     }
 
     public override void Exit()
     {
-        _unit.StopCoroutine(Patrolling());
+        _routine?.Stop();
     }
+
+    private bool IsInDestination(Vector2 destination) => Vector2.Distance(_unit.GetPosition, destination) < 0.1f;
 
     private Vector2 RandomDestinationPoint()
     {
-        float randomX = Random.Range(_area.x - _radius, _area.x + _radius);
-        float randomY = Random.Range(_area.y - _radius, _area.y + _radius);
+        var randomX = Random.Range(_area.x - _radius, _area.x + _radius);
+        var randomY = Random.Range(_area.y - _radius, _area.y + _radius);
 
         return new Vector2(randomX, randomY);
-    }  
-
-    private bool IsInDestination(Vector2 destination)
-    {
-        return Vector2.Distance(_unit.transform.position, destination) < 1.5f;
     }
 
-    private IEnumerator Patrolling()
+    private IEnumerator PatrolRoutine()
     {
         while (true)
         {
-            Vector2 destination = RandomDestinationPoint();
+            var destination = RandomDestinationPoint();
+            var path = PathFinding.BuildedPath(_unit.GetPosition, destination);
 
-            while (IsInDestination(destination) == false)
+            DebugNodes = path;
+
+            if (path != null)
             {
-                _unit.Move(destination, _speed);
+                foreach (var node in path)
+                {
+                    while (!IsInDestination(node.GetPosition))
+                    {
+                        _unit.Move(node.GetPosition, _speed);
 
-                yield return new WaitForFixedUpdate();
+                        yield return new WaitForFixedUpdate();
+                    }
+                }
             }
 
             yield return new WaitForSeconds(2f);

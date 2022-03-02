@@ -1,20 +1,19 @@
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 
-[Serializable]
 public class Stat 
 {
-    [SerializeField] private int _baseValue;
-    [SerializeField] private float _increaseRatio;
+    private int _baseValue;
+    private float _increaseRatio;
     private int _rawValue;
     private int _additionalValue;
 
     private Dictionary<StatModifier, int> _additionalValueSources = new Dictionary<StatModifier, int>();
 
-    [SerializeField] private StatType _type;
+    private StatType _type;
 
     public int Value => _rawValue + _additionalValue;
+
+    public StatType GetTypeOfStat() => _type;
 
     public Stat(StatType type, int baseValue, float increaseRatio)
     {
@@ -39,10 +38,5 @@ public class Stat
     {
         _additionalValue -= _additionalValueSources[source];
         _additionalValueSources.Remove(source);
-    }
-
-    public StatType GetTypeOfStat()
-    {
-        return _type;
     }
 }

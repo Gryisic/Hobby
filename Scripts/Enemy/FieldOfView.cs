@@ -1,19 +1,24 @@
 using UnityEngine;
+using System.Linq;
 
 public class FieldOfView 
 {
     private float _viewAngle;
     private float _viewDistance;
-    private LayerMask _targetMask;
+    private int _targetMask;
 
     private Transform _origin;
 
     private Vector3 _viewDirection;
 
-    public FieldOfView(float viewAngle, float viewDistance)
+    public ITarget Target { get; private set; }
+
+    public FieldOfView(float viewAngle, float viewDistance, Transform origin)
     {
         _viewAngle = viewAngle;
         _viewDistance = viewDistance;
+        _origin = origin;
+        _targetMask = (1 << LayerMask.NameToLayer(typeof(Player).ToString()));
     }
 
     public void SetOrigin(Transform origin) => _origin = origin;
@@ -23,26 +28,27 @@ public class FieldOfView
 
     public bool IsTargetSeen()
     {
-        var targets = Physics2D.OverlapCircleAll(_origin.position, _viewDistance, _targetMask);
+        var possibleTargets = Physics2D.OverlapCircleAll(_origin.position, _viewDistance, _targetMask);
 
-        if (targets.Length != 0)
+        if (possibleTargets.Length != 0)
         {
-            Vector3 target = targets[0].transform.position;
-            Vector3 directionToTarget = (_origin.position - target).normalized;
+            var concreteTarget = possibleTargets[0].transform;
+            var directionToTarget = (_origin.position - concreteTarget.position).normalized;
 
             if (Vector3.Angle(-_viewDirection, directionToTarget) < _viewAngle / 2f)
             {
-                var distanceToTarget = Vector3.Distance(_origin.position, target);
+                var distanceToTarget = Vector3.Distance(_origin.position, concreteTarget.position);
 
-                var rays = Physics2D.RaycastAll(_origin.position, directionToTarget, -distanceToTarget);
+                var target = MathExtention.TryGetComponentFromIgnoredRaycast<ITarget>(_origin.position, directionToTarget, 
+                    -distanceToTarget, 1);
 
-                rays[1].collider.TryGetComponent(out Player isPlayerHitted);
+                if (Target == null) Target = target;
 
-                Debug.Log(isPlayerHitted);
-
-                return isPlayerHitted;
+                return target != null;
             }
         }
+
+        if (Target != null) Target = null;
 
         return false;
     }

@@ -1,20 +1,20 @@
 public class StateMachine 
 {
-    private State _state;
+    protected State _state;
 
     public StateMachine(State initialState)
     {
         _state = initialState;
-
         _state.Enter();
     }
 
-    public void ChangeState(State state)
+    protected virtual void ChangeState(State newState)
     {
-        _state.Exit();
-
-        _state = state;
-
-        _state.Enter();
+        if (_state != newState)
+        {
+            _state.Exit();
+            _state = newState;
+            _state.Enter();
+        }
     }
 }

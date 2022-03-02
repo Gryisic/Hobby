@@ -1,11 +1,11 @@
-public class StatModifierValueCalculator 
+public static class StatModifierValueCalculator 
 {
-    public void UpdateValues(StatModifier modifier, IStats stats)
+    public static void UpdateValues(StatModifier modifier, IStats stats)
     {
         ApplyValue(modifier, stats);
     }
 
-    private void ApplyValue(StatModifier modifier, IStats stats)
+    private static void ApplyValue(StatModifier modifier, IStats stats)
     {
         foreach (var stat in stats.GetStats())
         {
@@ -14,7 +14,7 @@ public class StatModifierValueCalculator
         }
     }
 
-    private int CalculatedValue(StatModifier modifier, Stat stat)
+    private static int CalculatedValue(StatModifier modifier, Stat stat)
     {
         int finalValue = 0;
 
